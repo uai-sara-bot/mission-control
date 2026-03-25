@@ -16,6 +16,15 @@ RUN if [ -f pnpm-lock.yaml ]; then \
     fi
 
 FROM base AS build
+# Next.js bakes NEXT_PUBLIC_* at build time — pass as ARGs
+ARG NEXT_PUBLIC_GATEWAY_HOST=""
+ARG NEXT_PUBLIC_GATEWAY_PORT=""
+ARG NEXT_PUBLIC_GATEWAY_PROTOCOL=""
+ARG NEXT_PUBLIC_GATEWAY_URL=""
+ARG NEXT_PUBLIC_GATEWAY_OPTIONAL=""
+ARG NEXT_PUBLIC_GATEWAY_CLIENT_ID=""
+ARG NEXT_PUBLIC_GOOGLE_CLIENT_ID=""
+ARG NEXT_PUBLIC_COORDINATOR_AGENT=""
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN pnpm build
