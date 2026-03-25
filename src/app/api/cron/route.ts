@@ -317,7 +317,7 @@ export async function POST(request: NextRequest) {
       const triggerMode = body.mode || 'force'
       const { runCommand } = await import('@/lib/command')
       try {
-        const args = ['cron', 'trigger', job.id]
+        const args = ['cron', 'run', job.id]
         if (triggerMode === 'due') {
           args.push('--if-due')
         }
