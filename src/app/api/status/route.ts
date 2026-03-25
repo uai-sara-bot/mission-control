@@ -110,7 +110,7 @@ async function getMemorySnapshot() {
       const { stdout } = await runCommand('free', ['-b'], { timeoutMs: 3000 })
       const memLine = stdout.split('\n').find((line) => line.startsWith('Mem:'))
       if (memLine) {
-        const parts = memLine.trim().split(/\s+/)
+        const parts = (memLine || "").trim().split(/\s+/)
         const available = parseInt(parts[6] || parts[3] || '0', 10)
         if (Number.isFinite(available) && available > 0) {
           availableBytes = Math.min(available, totalBytes)
@@ -272,7 +272,7 @@ async function getSystemStatus(workspaceId: number) {
       const { stdout } = await runCommand('uptime', ['-s'], {
         timeoutMs: 3000
       })
-      const bootTime = new Date(stdout.trim())
+      const bootTime = new Date((stdout || "").trim())
       status.uptime = Date.now() - bootTime.getTime()
     }
   } catch (error) {
@@ -296,7 +296,7 @@ async function getSystemStatus(workspaceId: number) {
     const { stdout: diskOutput } = await runCommand('df', ['-h', '/'], {
       timeoutMs: 3000
     })
-    const lastLine = diskOutput.trim().split('\n').pop() || ''
+    const lastLine = (diskOutput || "").trim().split('\n').pop() || ''
     const diskParts = lastLine.split(/\s+/)
     if (diskParts.length >= 4) {
       status.disk = {
@@ -318,10 +318,10 @@ async function getSystemStatus(workspaceId: number) {
       { timeoutMs: 3000 }
     )
     const processes = processOutput.split('\n')
-      .filter(line => line.trim())
+      .filter(line => (line || "").trim())
       .filter(line => !line.trim().toLowerCase().startsWith('pid '))
       .map(line => {
-        const parts = line.trim().split(/\s+/)
+        const parts = (line || "").trim().split(/\s+/)
         return {
           pid: parts[0],
           command: parts.slice(2).join(' ')
@@ -391,7 +391,7 @@ async function getGatewayStatus() {
       .split('\n')
       .find((line) => /clawdbot-gateway|openclaw-gateway|openclaw.*gateway/i.test(line))
     if (match) {
-      const parts = match.trim().split(/\s+/)
+      const parts = (match || "").trim().split(/\s+/)
       gatewayStatus.running = true
       gatewayStatus.pid = parts[0]
     }
@@ -432,7 +432,7 @@ async function getAvailableModels() {
     })
     const ollamaModels = ollamaOutput.split('\n')
       .slice(1) // Skip header
-      .filter(line => line.trim())
+      .filter(line => (line || "").trim())
       .map(line => {
         const parts = line.split(/\s+/)
         return {

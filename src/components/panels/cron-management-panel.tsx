@@ -228,8 +228,8 @@ export function CronManagementPanel() {
       }
     }
     // Validate model if provided
-    if (form.model.trim() && availableModels.length > 0) {
-      if (!availableModels.includes(form.model.trim())) {
+    if ((form.model || '').trim() && availableModels.length > 0) {
+      if (!availableModels.includes((form.model || '').trim())) {
         errors.model = `Unknown model. Available: ${availableModels.slice(0, 3).join(', ')}${availableModels.length > 3 ? '...' : ''}`
       }
     }
@@ -426,7 +426,7 @@ export function CronManagementPanel() {
           jobName: newJob.name,
           schedule: newJob.schedule,
           command: newJob.command,
-          ...(newJob.model.trim() ? { model: newJob.model.trim() } : {}),
+          ...((newJob.model || '').trim() ? { model: (newJob.model || '').trim() } : {}),
           ...(staggerVal && staggerVal > 0 ? { staggerSeconds: staggerVal } : {}),
         })
       })
